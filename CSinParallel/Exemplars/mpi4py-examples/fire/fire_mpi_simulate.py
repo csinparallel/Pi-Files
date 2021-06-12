@@ -98,7 +98,8 @@ def main():
         comm.Send(percent_burned_data, dest=0, tag=1)
         comm.Send(iters_per_sim_data, dest=0, tag=2)
         proc_time = MPI.Wtime() - start
-        print("Process {0} Running time: {1:12.4f} seconds".format(id, proc_time))
+        print("Process {0} ({1}) Running time: {2:12.4f} seconds".format(id,
+                myHostName, proc_time))
     else:  #master
         # get each worker's arrays and add the contents to its arrays
         for proc in range(1, numProcesses):
@@ -125,7 +126,7 @@ def main():
 
         # 2 plots side by side
         fig, (ax1, ax2) = plt.subplots(1, 2, gridspec_kw={'wspace': 0.24}, figsize=(8.5,6))
-        fig.canvas.set_window_title("Forest Fire Simulation with Multiple Trials in Parallel")
+        fig.canvas.manager.set_window_title("Forest Fire Simulation with Multiple Trials in Parallel")
         print("figure width: {}".format(fig.get_figwidth()))
         # fig.set_figwidth(fig.get_figwidth() + 1.0, forward=True)
         fig.suptitle(upper_title)
