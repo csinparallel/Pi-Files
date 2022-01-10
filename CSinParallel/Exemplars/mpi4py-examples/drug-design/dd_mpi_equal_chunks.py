@@ -1,12 +1,12 @@
 # Drug Design Exemplar:
 # Equal number of tasks assigned to workers
 #
-#  This version of the 'drug 'design' program uses the master-worker
-#  pattern.  The master generates a list of ligands to be matched to
+#  This version of the 'drug 'design' program uses the conductor-worker
+#  pattern.  The conductor generates a list of ligands to be matched to
 #  a given protein and scored based on simple matching of letters.
 #  Each worker gets assigned an equal number of ligands from the list and
-#  computes a score for each one, sending it back to the master.
-#  In this version, the master is keeping track of the overall
+#  computes a score for each one, sending it back to the conductor.
+#  In this version, the conductor is keeping track of the overall
 #  maximum scoring ligands.
 #
 #  To run a small example:
@@ -44,12 +44,12 @@ def main():
     #     exit()
 
 
-    if id == 0:    # master
+    if id == 0:    # conductor
 
         ligands = genLigandList(args)
 
         # print details if chose verbose
-        printIf(args.verbose, "master created {} ligands : \n{}".format(len(ligands), ligands), flush=True)
+        printIf(args.verbose, "conductor created {} ligands : \n{}".format(len(ligands), ligands), flush=True)
         printIf(args.verbose, "to be scored against protein: {}".format(args.protein), flush=True)
 
         totalWork = len(ligands)
@@ -83,7 +83,7 @@ def main():
 
         # get a score for a ligand from each worker until all completed
         while (recvcount < totalWork) :
-            results, workerId = masterReceiveResults(comm, args)
+            results, workerId = conductorReceiveResults(comm, args)
             rcv_score = results[0]
             lig = results[1]
             recvcount += 1

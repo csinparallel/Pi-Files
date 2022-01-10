@@ -1,16 +1,16 @@
 # Drug Design Exemplar:
 # Dynamic assignment of tasks to workers
 #
-#  This version of the 'drug 'design' program uses the master-worker
-#  pattern.  The master generates a list of ligands to be matched to
+#  This version of the 'drug 'design' program uses the conductor-worker
+#  pattern.  The conductor generates a list of ligands to be matched to
 #  a given protein and scored based on simple matching of letters.
-#  The master assigns one ligand at a time to each worker, who will
+#  The conductor assigns one ligand at a time to each worker, who will
 #  compute a score for it.
 #  After the worker completes one, they send the resulting score and
 #  request another. This dynamic assignmnet means that if one ligand takes
 #  a worker a long time to compute, another worker can complete
 #  additional ones that might take less time.
-#  In this version, the master is keeping track of the overall
+#  In this version, the conductor is keeping track of the overall
 #  maximum scoring ligands.
 #
 #  To run a small example:
@@ -49,7 +49,7 @@ def main():
         ligands = genLigandList(args)
 
         # print details if chose verbose
-        printIf(args.verbose, "master created {} ligands : \n{}".format(len(ligands), ligands), flush=True)
+        printIf(args.verbose, "conductor created {} ligands : \n{}".format(len(ligands), ligands), flush=True)
         printIf(args.verbose, "to be scored against protein: {}".format(args.protein), flush=True)
 
         handOutWork(ligands, comm, numProcesses, args, myHostName)
@@ -75,20 +75,20 @@ def handOutWork(ligands, comm, numProcesses, args, myHostName):
     maxScore = -1
     maxScoreLigands = []
 
-    printIf(args.verbose, "master sending first tasks", flush=True)
+    printIf(args.verbose, "conductor sending first tasks", flush=True)
     # send out the first tasks to all workers
     for id in range(1, numProcesses):
         if workcount < totalWork:
             work=ligands[workcount]
             comm.send(work, dest=id, tag=WORKTAG)
             workcount += 1
-            printIf(args.verbose,"master on {} sent {} to {}".format(myHostName, work, id), flush=True)
+            printIf(args.verbose,"conductor on {} sent {} to {}".format(myHostName, work, id), flush=True)
 
     # while there is still work,
     # receive result from a worker, which also
     # signals they would like some new work
     while (workcount < totalWork) :
-        results, workerId = masterReceiveResults(comm, args)
+        results, workerId = conductorReceiveResults(comm, args)
         score = results[0]
         lig = results[1]
         recvcount += 1
@@ -97,7 +97,7 @@ def handOutWork(ligands, comm, numProcesses, args, myHostName):
         work=ligands[workcount]
         comm.send(work, dest=workerId, tag=WORKTAG)
         workcount += 1
-        printIf(args.verbose,"master on {} sent {} to {}".format(myHostName, work, workerId), flush=True)
+        printIf(args.verbose,"conductor on {} sent {} to {}".format(myHostName, work, workerId), flush=True)
 
         # keep track of maximum
         maxScore, maxScoreLigands = updateMaximum(score, lig, maxScore, maxScoreLigands)
@@ -105,7 +105,7 @@ def handOutWork(ligands, comm, numProcesses, args, myHostName):
 
     # Receive results for outstanding work requests.
     while (recvcount < totalWork):
-        results, workerId = masterReceiveResults(comm, args)
+        results, workerId = conductorReceiveResults(comm, args)
         score = results[0]
         lig = results[1]
         recvcount += 1
@@ -138,7 +138,7 @@ def worker(comm, args, myHostName):
             return
         # do work of scoring the ligand
         s = score(nextLigand, args.protein)
-        # indicate done with work by sending to Master
+        # indicate done with work by sending to Conductor
         result = [s, nextLigand]
         comm.send(result, dest=0)
 

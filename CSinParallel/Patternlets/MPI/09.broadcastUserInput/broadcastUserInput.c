@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#define MASTER 0
+#define CONDUCTOR 0
 
 /* gets value of answer from user
  * @param: argc, argument count.
@@ -34,7 +34,7 @@
  */
 void getInput(int argc, char* argv[], int myRank, int* answer) {
 
-    if (myRank == 0){  // master process
+    if (myRank == 0){  // conductor process
         if (argc == 2){
              *answer = atoi(argv[1]);
         }

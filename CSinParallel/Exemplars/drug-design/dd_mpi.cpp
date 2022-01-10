@@ -109,7 +109,7 @@ const std::vector<Pair>& MR::run(int ml, int nl, const std::string& p) {
     for(int i = 0; i < nnodes; ++i) {
       finished.push_back(0);
     }
-    finished[root] = 1;  // master task does no scoring
+    finished[root] = 1;  // conductor task does no scoring
     
     std::vector<Pair> pairs;
     

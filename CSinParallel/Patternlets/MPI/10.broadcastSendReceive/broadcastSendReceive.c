@@ -1,7 +1,7 @@
 /*
  * broadcastSendReceive.c
  * ... illustrates basic send receive functions.
- * Master process sends filled array to each process.
+ * Conductor process sends filled array to each process.
  *
  * Hannah Sonsalla, Macalester College 2017
  * fill and print function from code by Joel Adams, Calvin College
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
      
 	print("BEFORE", id, array);
 	
-	// master process sends array to every process
+	// conductor process sends array to every process
 	if (id == 0) {
 		for (int i = 1; i < numProcesses; i++) {
 			MPI_Send(&array, MAX, MPI_INT, 

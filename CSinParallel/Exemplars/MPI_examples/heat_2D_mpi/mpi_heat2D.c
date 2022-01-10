@@ -10,13 +10,13 @@
  *   time-stepping, an array containing two domains is used; these domains
  *   alternate between old data and new data.
  *
- *   In this parallelized version, the grid is decomposed by the master
+ *   In this parallelized version, the grid is decomposed by the conductor
  *   process and then distributed by rows to the worker processes.  At each
  *   time step, worker processes must exchange border data with neighbors,
  *   because a grid point's current temperature depends upon it's previous
  *   time step value plus the values of the neighboring grid points.  Upon
  *   completion of all time steps, the worker processes return their results
- *   to the master process.
+ *   to the conductor process.
  *
  *   Two data files are produced: an initial data set and a final data set.
  *   An X graphic of these two states displays after all calculations have
@@ -41,7 +41,7 @@
 #define RTAG        3                  /* message tag */
 #define NONE        0                  /* indicates no neighbor */
 #define DONE        4                  /* message tag */
-#define MASTER      0                  /* taskid of first process */
+#define CONDUCTOR      0                  /* taskid of first process */
 
 struct Parms {
   float cx;
@@ -72,8 +72,8 @@ rc = -1;      // return when something went wrong and aborted
    MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
    numworkers = numtasks-1;
 
-   if (taskid == MASTER) {
-      /************************* master code *******************************/
+   if (taskid == CONDUCTOR) {
+      /************************* conductor code *******************************/
       /* Check if numworkers is within range - quit if not */
       if ((numworkers > MAXWORKER) || (numworkers < MINWORKER)) {
          printf("ERROR: the number of tasks must be between %d and %d.\n",
@@ -140,12 +140,12 @@ rc = -1;      // return when something went wrong and aborted
       //printf("Click on EXIT button to quit program.\n");
       //draw_heat(NXPROB,NYPROB);
       // MPI_Finalize();             // moved to end from original (LS)
-   }   /* End of master code */
+   }   /* End of conductor code */
 
 
 
    /************************* workers code **********************************/
-   if (taskid != MASTER)
+   if (taskid != CONDUCTOR)
    {
       /* Initialize everything - including the borders - to zero */
       for (iz=0; iz<2; iz++)
@@ -153,8 +153,8 @@ rc = -1;      // return when something went wrong and aborted
             for (iy=0; iy<NYPROB; iy++)
                u[iz][ix][iy] = 0.0;
 
-      /* Receive my offset, rows, neighbors and grid partition from master */
-      source = MASTER;
+      /* Receive my offset, rows, neighbors and grid partition from conductor */
+      source = CONDUCTOR;
       msgtype = BEGIN;
       MPI_Recv(&offset, 1, MPI_INT, source, msgtype, MPI_COMM_WORLD, &status);
       MPI_Recv(&rows, 1, MPI_INT, source, msgtype, MPI_COMM_WORLD, &status);
@@ -203,10 +203,10 @@ rc = -1;      // return when something went wrong and aborted
          update(start,end,NYPROB,&u[iz][0][0],&u[1-iz][0][0]);
          iz = 1 - iz;
       }
-      /* Finally, send my portion of final results back to master */
-      MPI_Send(&offset, 1, MPI_INT, MASTER, DONE, MPI_COMM_WORLD);
-      MPI_Send(&rows, 1, MPI_INT, MASTER, DONE, MPI_COMM_WORLD);
-      MPI_Send(&u[iz][offset][0], rows*NYPROB, MPI_FLOAT, MASTER, DONE,
+      /* Finally, send my portion of final results back to conductor */
+      MPI_Send(&offset, 1, MPI_INT, CONDUCTOR, DONE, MPI_COMM_WORLD);
+      MPI_Send(&rows, 1, MPI_INT, CONDUCTOR, DONE, MPI_COMM_WORLD);
+      MPI_Send(&u[iz][offset][0], rows*NYPROB, MPI_FLOAT, CONDUCTOR, DONE,
                MPI_COMM_WORLD);
       // MPI_Finalize();  // moved to end from original (LS)
    }

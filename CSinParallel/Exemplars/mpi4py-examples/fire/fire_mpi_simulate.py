@@ -29,7 +29,7 @@ def main():
     np.random.seed()    # each process starts with seed from its /dev/urandom
 
     start = MPI.Wtime() # start the timing
-    # master process will get the arguments
+    # conductor process will get the arguments
     # each process gets sent row_size, prob_spread_increment, and
     # its number of trials to perform (via a broadcast)
     if id == 0:
@@ -63,7 +63,7 @@ def main():
     #   sums of each value computed for each probability while iterating
     percent_burned_data = np.zeros( (tot_prob_trials, 2) )
     iters_per_sim_data = np.zeros( (tot_prob_trials, 2) )
-    # master holds arrays for receving data from workers
+    # conductor holds arrays for receving data from workers
     if id == 0:
         recv_percent_burned_data = np.zeros( (tot_prob_trials, 2) )
         recv_iters_per_sim_data = np.zeros( (tot_prob_trials, 2) )
@@ -92,7 +92,7 @@ def main():
         percent_burned_data[(row,1)] = percent_burned_data[(row,1)]/num_trials
         iters_per_sim_data[(row,1)] = iters_per_sim_data[(row,1)]/num_trials
 
-    # each worker will send its computed data to the master, who receives
+    # each worker will send its computed data to the conductor, who receives
     # it in turn from each worker and updates its copy
     if id !=0:
         comm.Send(percent_burned_data, dest=0, tag=1)
@@ -100,7 +100,7 @@ def main():
         proc_time = MPI.Wtime() - start
         print("Process {0} ({1}) Running time: {2:12.4f} seconds".format(id,
                 myHostName, proc_time))
-    else:  #master
+    else:  #conductor
         # get each worker's arrays and add the contents to its arrays
         for proc in range(1, numProcesses):
             comm.Recv(recv_percent_burned_data, source=proc, tag=1)
@@ -113,9 +113,9 @@ def main():
         for row in range(tot_prob_trials):
             percent_burned_data[(row,1)] = percent_burned_data[(row,1)]/numProcesses
             iters_per_sim_data[(row,1)] = iters_per_sim_data[(row,1)]/numProcesses
-    # barrier here since master waited until all are finished sending
+    # barrier here since conductor waited until all are finished sending
 
-    if id == 0: #master will have overall time and can print the results
+    if id == 0: #conductor will have overall time and can print the results
         finish = MPI.Wtime()  # end the timing
         total_time = finish - start
         print("Total Running time: {0:12.4f} seconds".format(total_time))

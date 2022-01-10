@@ -21,7 +21,7 @@
 #include <mpi.h>     // MPI
 #include <unistd.h>  // sleep()
 
-#define  MASTER 0
+#define  CONDUCTOR 0
 
 /* answer the ultimate question of life, the universe,
  *  and everything, based on id and numProcs.
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
     MPI_Reduce(&localTime, &totalTime, 1, MPI_DOUBLE,
         MPI_MAX, 0, MPI_COMM_WORLD);
 
-    if ( id == MASTER ) {
+    if ( id == CONDUCTOR ) {
         printf("\nThe answer is %d; computing it took %f secs.\n\n",
                    answer, totalTime);
     }

@@ -77,14 +77,14 @@ def score(lig, pro):
     else:
         return max(score(lig[1:], pro), score(lig, pro[1:]))
 
-# functions used by Master
+# functions used by Conductor
 #
 # receive next finished result
-def masterReceiveResults(comm, args):
+def conductorReceiveResults(comm, args):
     stat = MPI.Status()
     results = comm.recv(source=MPI.ANY_SOURCE, status=stat)
     workerId = stat.Get_source()
-    printIf(args.verbose, "master received {} with score {} from {}"\
+    printIf(args.verbose, "conductor received {} with score {} from {}"\
     .format(results[1], results[0], workerId), flush=True)
     return results, workerId
 
