@@ -37,7 +37,7 @@ int main(int argc, char ** argv) {
         sscanf(argv[1],"%d",&forest_size);
     }
     if (argc > 2) {
-        sscanf(argv[2],"%d",&prob_spread);
+        sscanf(argv[2],"%lf",&prob_spread);
     }
     if (argc > 3) {
         sscanf(argv[3],"%d",&do_display);

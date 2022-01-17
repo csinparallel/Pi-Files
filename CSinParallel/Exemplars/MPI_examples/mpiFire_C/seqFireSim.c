@@ -8,7 +8,8 @@
  *
  * Usage, with default values in ():
  * 
- * Fire [forestSize(20)] [numTrials(100)] * [numProbabilities(101)] [showGraph(1)]
+ *  ./seqFireSim [forestSize(20)] [numTrials(100)] [numProbabilities(101)] [showGraph(1)]
+ *
  * The forest is simulated as forestSize*forestSize trees.
  * numTrials is the number of simulations of one fire to run,
  *    over a set of probability thresholds.
@@ -74,6 +75,17 @@ int main(int argc, char ** argv) {
     }
     if (do_display!=0) do_display=1;
 
+    // so we can use MPI timinng function with MPICH
+    int numtasks;   // total processes
+    int taskid;     // id of task running a process
+    MPI_Init(&argc,&argv);
+    MPI_Comm_size(MPI_COMM_WORLD,&numtasks);
+    MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
+    
+    if (numtasks > 1 && taskid == 0) {
+      printf("Please use one process for this sequential version. Quitting.\n");
+      exit(1);
+    }
     // for timing
     double startTime, finishTime;
 
@@ -146,6 +158,9 @@ int main(int argc, char ** argv) {
     free(percent_burned);
     free(num_iterations);
     free(avg_iterations);
+
+    // Just for the timing function
+    MPI_Finalize();
     return 0;
 }
 

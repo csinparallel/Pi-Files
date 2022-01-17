@@ -1,4 +1,5 @@
 
+
 # names of the binaries
 ONEFIRE = oneFire
 SEQSIM = seqFireSim
@@ -23,6 +24,9 @@ OBJSM      = $(SRCSM:.c=.o)
 
 # which compiler to use
 CC        = mpicc
+
+# compiler flags for warnings that can be ignored
+CFLAGS = -Wno-unused-result -Wno-format-overflow -Wno-maybe-unitialized
 
 # valid file suffixes 
 .SUFFIXES: .c .o .cpp

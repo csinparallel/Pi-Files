@@ -6,7 +6,6 @@
 
 // Pause for user input before closing the plot displays
 void wait_to_continue() {
-  int ch;
 
   printf("Pausing to display plots. Press Enter to finish.");
   fflush(stdout);
@@ -25,7 +24,7 @@ void drawSimGraphs(int forest_size, int n_probs, int n_trials,
       gnuplot_ctrl * plt;
 
       plt = gnuplot_init();
-      gnuplot_cmd(plt,"set terminal qt font 'Verdana,12' title 'Fire Simulation'");
+      gnuplot_cmd(plt,"set terminal x11 font 'Verdana,12' title 'Fire Simulation'");
       gnuplot_cmd(plt, "set title '%dx%d Trees, %d Probabilities, %d Trials'",
 		  forest_size, forest_size, n_probs, n_trials);
       gnuplot_cmd(plt, "set nokey");
@@ -38,7 +37,7 @@ void drawSimGraphs(int forest_size, int n_probs, int n_trials,
       // next iterations
        gnuplot_ctrl * plt2;
       plt2 = gnuplot_init();
-      gnuplot_cmd(plt2,"set terminal qt font 'Verdana,12' title 'Fire Simulation'");
+      gnuplot_cmd(plt2,"set terminal x11 font 'Verdana,12' title 'Fire Simulation'");
       gnuplot_cmd(plt2, "set title '%dx%d Trees, %d Probabilities, %d Trials'",
 		  forest_size, forest_size, n_probs, n_trials);
       gnuplot_cmd(plt2, "set nokey");
@@ -61,7 +60,7 @@ void display_forest(int forest_size, int ** forest, double percent_burned) {
     gnuplot_ctrl * plt;
         
     plt = gnuplot_init();
-    gnuplot_cmd(plt,"set terminal qt font 'Verdana,12' title 'One Fire'");
+    gnuplot_cmd(plt,"set terminal x11 font 'Verdana,12' title 'One Fire'");
     gnuplot_cmd(plt, "set title '%dx%d trees, %f percent burned'",
 		forest_size, forest_size, percent_burned);
     // hard-coding danger: 0 is unburnt, 3 is burnt

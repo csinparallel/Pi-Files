@@ -224,7 +224,8 @@ gnuplot_ctrl * gnuplot_init(void)
     handle->nplots = 0 ;
     gnuplot_setstyle(handle, "points") ;
     handle->ntmp = 0 ;
-    handle->gnucmd = popen(GNUPLOT_EXEC_NO_STDERR, "w") ;
+//    handle->gnucmd = popen(GNUPLOT_EXEC_NO_STDERR, "w") ;
+    handle->gnucmd = popen(GNUPLOT_EXEC, "w") ;
     
     if (handle->gnucmd == NULL) {
         fprintf(stderr, "error starting gnuplot\n") ;
