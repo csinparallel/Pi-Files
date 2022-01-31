@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //extern void draw_heat(int nx, int ny);       /* X routine to create graph */
+#include "display.h"
 
 #define NXPROB      20                 /* x dimension of problem grid */
 #define NYPROB      20                 /* y dimension of problem grid */
@@ -140,6 +141,11 @@ rc = -1;      // return when something went wrong and aborted
       //printf("Click on EXIT button to quit program.\n");
       //draw_heat(NXPROB,NYPROB);
       // MPI_Finalize();             // moved to end from original (LS)
+
+      draw2DHeat();
+      printf("Pausing to display plots. Press Enter to finish.");
+      fflush(stdout);
+      getchar();
    }   /* End of conductor code */
 
 

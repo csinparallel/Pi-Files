@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //extern void draw_heat(int nx, int ny);       /* X routine to create graph */
+#include "display.h"
 
 #define NXPROB      512                 /* x dimension of problem grid */
 #define NYPROB      512                 /* y dimension of problem grid */
@@ -104,7 +105,7 @@ rc = -1;      // return when something went wrong and aborted
       printf("Grid size: X= %d  Y= %d  Time steps= %d\n",nx,ny,steps);
       // printf("Initializing grid and writing initial.dat file...\n");
       inidat(nx, ny, u);
-      // prtdat(nx, ny, u, "initial.dat");
+      prtdat(nx, ny, u, "initial.dat");
 
       // LS conductor starts timing after initialization of grid
       MPI_Barrier(MPI_COMM_WORLD);
@@ -154,8 +155,8 @@ rc = -1;      // return when something went wrong and aborted
 
       /* Write final output, call X graph and finalize MPI */
       // printf("Writing final.dat file and generating graph...\n");
-      // printf("Writing final.dat file ...\n");
-      // prtdat(nx, ny, &u[0][0][0], "final.dat");
+      printf("Writing final.dat file ...\n");
+      prtdat(nx, ny, &u[0][0][0], "final.dat");
       //printf("Click on MORE button to view initial/final states.\n");
       //printf("Click on EXIT button to quit program.\n");
       //draw_heat(nx,ny);
@@ -235,12 +236,17 @@ rc = -1;      // return when something went wrong and aborted
 
    MPI_Barrier(MPI_COMM_WORLD);   //wait for all to get here for timing
    if ( taskid == CONDUCTOR ) {
-        totalTime = MPI_Wtime() - startTime;
-        printf("\nTime: %f secs.\n\n", totalTime);
-    }
+      totalTime = MPI_Wtime() - startTime;
+      printf("\nTime: %f secs.\n\n", totalTime);
+      draw2DHeat();
+      printf("Pausing to display plots. Press Enter to finish.");
+      fflush(stdout);
+      getchar();
+   } 
 
-    MPI_Finalize();
-    return 0;
+   
+   MPI_Finalize();
+   return 0;
 
 }
 
