@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <cstring>
 
 #include "dd_functions.h"
 

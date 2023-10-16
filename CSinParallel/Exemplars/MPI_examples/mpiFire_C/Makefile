@@ -23,10 +23,11 @@ SRCSM      = fire_functions.c mpiFireSim.c fireSimPlot.c gnuplot_i.c
 OBJSM      = $(SRCSM:.c=.o)
 
 # which compiler to use
-CC        = mpicc
+CC        = mpicc 
 
 # compiler flags for warnings that can be ignored
 CFLAGS = -Wno-unused-result -Wno-format-overflow -Wno-maybe-unitialized
+
 
 # valid file suffixes 
 .SUFFIXES: .c .o .cpp
